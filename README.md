@@ -3,6 +3,11 @@ AuroraPy is a python implementation of Aurora communication protocol for Power-O
 
 It implements a **serial Client** and a **TCP Client** for who wants to convert RS485 to Ethernet.
 
+## Pip installation
+```
+pip install aurorapy
+```
+
 ## Manual installation
 ```
 git clone git@code.energievalsabbia.it:ccatterina/aurorapy.git
