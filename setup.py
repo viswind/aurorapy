@@ -1,4 +1,3 @@
-import os
 try:
     from setuptools import setup
 except ImportError:
@@ -6,7 +5,7 @@ except ImportError:
 
 setup(
     name="aurorapy",
-    version="0.2.0",
+    version="0.2.1",
     description='Python implementation of Aurora Protocol',
     author="E.Va Energie Valsabbia",
     author_email="it@energievalsabbia.it",
