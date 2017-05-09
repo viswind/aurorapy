@@ -533,12 +533,14 @@ class AuroraTCPClient(AuroraBaseClient):
         try:
             self.s.send(str(request))
             self.s.setblocking(0)
-            ready = select.select([self.s], [], [], self.timeout)
-            if ready[0]:
-                response = self.s.recv(1024)
-            else:
-                raise AuroraError("Reading Timeout")
+            response = ''
+            while(len(response)<8):
+                ready = select.select([self.s], [], [], self.timeout)
+                if ready[0]:
+                    response += self.s.recv(1024)
+                else:
+                    raise AuroraError("Reading Timeout")
         except socket.error as e:
-            raise AuroraError(e.message)
+            raise AuroraError("Socket Error: " + e.message)
 
         return bytearray(response)
