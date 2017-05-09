@@ -170,21 +170,21 @@ class AuroraBaseClient(object):
         res = response.decode('ascii')
         return ' - '.join(map(lambda(i,x): Mapping.VERSION_PARAMETERS[i].get(x, 'N/A'), enumerate(res[2:6])))
 
-    def measure(self, index, _global=False):
+    def measure(self, index, global_measure=False):
         """
         Sends a Measure request to the DSP. (command: 59)
 
         Arguments:
             - index: Index of the measure. (see the manual) [int]
-            - _global: if True the function returns the global measurement (Only for master)
-                       otherwise returns the module measurement (Master and Slave) [bool]
+            - global_measure: if True the function returns the global measurement (Only for master)
+                              otherwise returns the module measurement (Master and Slave) [bool]
         Returns:
             - The measurement with the stadard unit of measure (V/W/a/C°). [float]
         """
-        _global = 1 if _global else 0
+        global_measure = 1 if global_measure else 0
 
-        # [ address, command_num, index, _global, *unused_bytes ]
-        request = bytearray([self.address, 59, index, _global, 0, 0, 0, 0])
+        # [ address, command_num, index, global_measure, *unused_bytes ]
+        request = bytearray([self.address, 59, index, global_measure, 0, 0, 0, 0])
         request += self.crc(request)
 
         response = self.send_and_recv(request)
@@ -252,7 +252,7 @@ class AuroraBaseClient(object):
 
         return response[2:6]
 
-    def cumulated_energy(self, period, ndays=None, _global=False):
+    def cumulated_energy(self, period, ndays=None, global_measure=False):
         """
         Sends a Cumulated Float Energy Reading request. (command: 68)
         Only for Aurora Central
@@ -262,8 +262,8 @@ class AuroraBaseClient(object):
                       For ex. 2 => 'Current week energy'. [int]
             - ndays: To specify only if period is 5 => 'Last Ndays day Energy' represents the
                      number of days of period. (Max 366) [int]
-            - _global: if True the function returns the global measurement (Only for master)
-                       otherwise returns the module measurement (Master and Slave) [bool]
+            - global_measure: if True the function returns the global measurement (Only for master)
+                               otherwise returns the module measurement (Master and Slave) [bool]
         Returns:
             The cumulated energy. [float]
         """
@@ -274,8 +274,8 @@ class AuroraBaseClient(object):
         else:
             request += bytearray([0,0])
 
-        _global = 1 if _global else 0
-        request.append(_global)
+        global_measure = 1 if global_measure else 0
+        request.append(global_measure)
 
         # Unused bytes
         request += bytearray([0, 0])
