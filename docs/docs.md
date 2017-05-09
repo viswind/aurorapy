@@ -40,17 +40,19 @@ Version format:
 
 ## 59) Measure request to the DSP
 
-Measure request is implemented by **measure(self, index, _global=False)** method.
+Measure request is implemented by **measure(self, index, global_measure=False)** method.
 
 ```python
-grid_voltage = client.measure(1, _global=True)
+grid_voltage = client.measure(1, global_measure=True)
 
 inverter_temperature = client.measure(21)
 ```
 
-_global must be set to True for the Global measurement. (Only master can require global measurements)
+global_measure must be set to True for the Global measurement. (Only master can require global measurements)
 
 Measures marked with '\*' can be required as global.
+
+N.B. Not all measurements are available for all type of inverters.
 
 ### Table of measure's codes
 
@@ -143,7 +145,7 @@ It returns a bytearray of 4 bytes those represent the state of the flag1, flag2,
 
 ## 68) Cumulated energy request
 
-Cumulated energy request is implemented by **cumulated_energy(self, period, ndays=None, _global=False)** method.
+Cumulated energy request is implemented by **cumulated_energy(self, period, ndays=None, global_measure=False)** method.
 
 ```python
 daily_energy = client.cumulated_energy(period=1)
@@ -152,20 +154,20 @@ week_energy = client.cumulated_energy(period=2)
 
 last_200_days_energy = client.cumulated_energy(period=5, ndays=200)
 
-year_energy_global = client.cumulated_energy(period=4, _global=True)
+year_energy_global = client.cumulated_energy(period=4, global_measure=True)
 ```
 
 ### Avaiable periods:
-1 = Current day
-2 = Current week
-3 = Current Month
-4 = Current Year
-5 = Last NDays days. (Need to set ndays parameter, maximum 366)
-6 = Total
-7 = Partial
+* 1 = Current day
+* 2 = Current week
+* 3 = Current Month
+* 4 = Current Year
+* 5 = Last NDays days. (Need to set ndays parameter, maximum 366)
+* 6 = Total
+* 7 = Partial
 
 ### Global
-Setting _global parameter to True returns the global energy otherwise it returns the module energy. (Available for all periods)
+Setting global_measure parameter to True returns the global energy otherwise it returns the module energy. (Available for all periods)
 
 ## 70) Time/Date reading request
 
@@ -216,8 +218,8 @@ Returns the info requested.
 
 ### Available index:
 
-1 = Transformer Type
-2 = 50kW modules number
+* 1 = Transformer Type
+* 2 = 50kW modules number
 
 ## 200) Junction Box State request
 
