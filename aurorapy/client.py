@@ -4,6 +4,18 @@ import socket
 import select
 import struct
 import binascii
+import logging
+import sys
+
+logger = logging.getLogger('aurorapy')
+logger.setLevel(logging.WARNING)
+
+ch = logging.StreamHandler(sys.stdout)
+ch.setLevel(logging.WARNING)
+formatter = logging.Formatter('[%(asctime)s] %(levelname)s [%(name)s:%(lineno)s] %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+logger.propagate = False
 
 from serial.serialutil import SerialException
 import serial
@@ -531,6 +543,13 @@ class AuroraTCPClient(AuroraBaseClient):
             raise AuroraError("You must connect client before launch a command")
 
         try:
+            # Empty the socket buffer before send request and receive response
+            # this is made to prevent receipt of noise in the response packet.
+            ready = select.select([self.s], [], [], 0.1)
+            if ready[0]:
+                noise = self.s.recv(4096)
+                logger.warning('Found noises on the socket buffer: %s' % (binascii.hexlify(noise)))
+
             self.s.send(str(request))
             self.s.setblocking(0)
             response = ''
