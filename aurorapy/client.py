@@ -125,11 +125,11 @@ class AuroraBaseClient(object):
         self.check_transmission_state(response)
 
         states = []
-        states.append(Mapping.GLOBAL_STATES[response[1]])
-        states.append(Mapping.INVERTER_STATES[response[2]])
-        states.append(Mapping.DCDC_STATES[response[3]])
-        states.append(Mapping.DCDC_STATES[response[4]])
-        states.append(Mapping.ALARM_STATES[response[5]])
+        states.append(Mapping.GLOBAL_STATES.get(response[1], 'N/A'))
+        states.append(Mapping.INVERTER_STATES.get(response[2], 'N/A'))
+        states.append(Mapping.DCDC_STATES.get(response[3], 'N/A'))
+        states.append(Mapping.DCDC_STATES.get(response[4], 'N/A'))
+        states.append(Mapping.ALARM_STATES.get(response[5], 'N/A'))
 
         return states[state_type - 1]
 
@@ -168,7 +168,7 @@ class AuroraBaseClient(object):
         self.check_transmission_state(response)
 
         res = response.decode('ascii')
-        return ' - '.join(map(lambda(i,x): Mapping.VERSION_PARAMETERS[i][x], enumerate(res[2:6])))
+        return ' - '.join(map(lambda(i,x): Mapping.VERSION_PARAMETERS[i].get(x, 'N/A'), enumerate(res[2:6])))
 
     def measure(self, index, _global=False):
         """
@@ -343,7 +343,7 @@ class AuroraBaseClient(object):
         self.check_crc(response)
         self.check_transmission_state(response)
 
-        return list(map(lambda x: Mapping.ALARM_STATES[x], response[2:6]))
+        return list(map(lambda x: Mapping.ALARM_STATES.get(x, None), response[2:6]))
 
     def sysinfo(self, index):
         """
@@ -364,7 +364,7 @@ class AuroraBaseClient(object):
         self.check_crc(response)
         self.check_transmission_state(response)
 
-        return Mapping.TRANSFORMER_TYPES[response[2]]
+        return Mapping.TRANSFORMER_TYPES.get(response[2], 'N/A')
 
     def junction_box_param(self, junction_box,  parameter):
         """
