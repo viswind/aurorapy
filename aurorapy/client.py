@@ -117,7 +117,7 @@ class AuroraBaseClient(object):
         else:
             raise AuroraError('Unknown transmission state')
 
-    def state(self, state_type):
+    def state(self, state_type, mapped=True):
         """
         Sends a state request (command: 50).
 
@@ -135,6 +135,9 @@ class AuroraBaseClient(object):
 
         self.check_crc(response)
         self.check_transmission_state(response)
+
+        if not mapped:
+            return response[state_type]
 
         states = []
         states.append(Mapping.GLOBAL_STATES.get(response[1], 'N/A'))
@@ -399,7 +402,7 @@ class AuroraBaseClient(object):
 
         return struct.unpack('>f', response[2:6])[0]
 
-    def junction_box_state(self, junction_box):
+    def junction_box_state(self, junction_box, mapped=True):
         """
         Sends a Junction Box State Request. (command: 200)
 
@@ -417,10 +420,14 @@ class AuroraBaseClient(object):
         self.check_crc(response)
         self.check_transmission_state(response)
 
-        # Splits the state byte in 8 bits.
+
         state = response[1]
+        if not mapped:
+            return state
+
         n_bits = 8
 
+        # Splits the state byte in 8 bits.
         bits = [(state >> bit) & 1 for bit in range(n_bits - 1, -1, -1)]
         state = ""
         for pos, bit in enumerate(bits):
