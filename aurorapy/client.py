@@ -381,6 +381,30 @@ class AuroraBaseClient(object):
 
         return Mapping.TRANSFORMER_TYPES.get(response[2], 'N/A')
 
+    def junction_box_monitoring_status(self):
+        """
+        Sends a Junction Box monitoring status request (command: 103)
+        Returns:
+            - None if the module is not managing junction boxes, otherwise
+              returns 2 bytes that represents the active junction box.
+
+              Example:
+                &0x0124 -> 0000000100100100
+                junction boxes 8, 11, 14 are active.
+        """
+        request = bytearray([self.address, 103, 0, 0, 0, 0, 0, 0])
+        request += self.crc(request)
+
+        response = self.send_and_recv(request)
+
+        self.check_crc(response)
+        self.check_transmission_state(response)
+        if response[1] == 0:
+            return None
+        else:
+            return response[4:6]
+        return response
+
     def junction_box_param(self, junction_box,  parameter):
         """
         Sends a Junction Box Val Request. (command: 201)
