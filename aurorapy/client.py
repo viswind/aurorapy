@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-
+from __future__ import absolute_import
+from past.builtins import map
 import socket
 import select
 import struct
@@ -20,8 +21,8 @@ logger.propagate = False
 from serial.serialutil import SerialException
 import serial
 
-from mapping import Mapping
-import defaults
+from .mapping import Mapping
+from .defaults import Defaults
 
 class AuroraError(Exception):
     pass
@@ -117,7 +118,7 @@ class AuroraBaseClient(object):
         else:
             raise AuroraError('Unknown transmission state')
 
-    def state(self, state_type):
+    def state(self, state_type, mapped=True):
         """
         Sends a state request (command: 50).
 
@@ -135,6 +136,9 @@ class AuroraBaseClient(object):
 
         self.check_crc(response)
         self.check_transmission_state(response)
+
+        if not mapped:
+            return response[state_type]
 
         states = []
         states.append(Mapping.GLOBAL_STATES.get(response[1], 'N/A'))
@@ -180,7 +184,7 @@ class AuroraBaseClient(object):
         self.check_transmission_state(response)
 
         res = response.decode('ascii')
-        return ' - '.join(map(lambda(i,x): Mapping.VERSION_PARAMETERS[i].get(x, 'N/A'), enumerate(res[2:6])))
+        return (' - '.join(map(lambda i,x: Mapping.VERSION_PARAMETERS[i].get(x, 'N/A'), [0,1,2,3], res[2:6])))
 
     def measure(self, index, global_measure=False):
         """
@@ -378,6 +382,30 @@ class AuroraBaseClient(object):
 
         return Mapping.TRANSFORMER_TYPES.get(response[2], 'N/A')
 
+    def junction_box_monitoring_status(self):
+        """
+        Sends a Junction Box monitoring status request (command: 103)
+        Returns:
+            - None if the module is not managing junction boxes, otherwise
+              returns 2 bytes that represents the active junction box.
+
+              Example:
+                &0x0124 -> 0000000100100100
+                junction boxes 8, 11, 14 are active.
+        """
+        request = bytearray([self.address, 103, 0, 0, 0, 0, 0, 0])
+        request += self.crc(request)
+
+        response = self.send_and_recv(request)
+
+        self.check_crc(response)
+        self.check_transmission_state(response)
+        if response[1] == 0:
+            return None
+        else:
+            return response[4:6]
+        return response
+
     def junction_box_param(self, junction_box,  parameter):
         """
         Sends a Junction Box Val Request. (command: 201)
@@ -399,7 +427,7 @@ class AuroraBaseClient(object):
 
         return struct.unpack('>f', response[2:6])[0]
 
-    def junction_box_state(self, junction_box):
+    def junction_box_state(self, junction_box, mapped=True):
         """
         Sends a Junction Box State Request. (command: 200)
 
@@ -417,10 +445,14 @@ class AuroraBaseClient(object):
         self.check_crc(response)
         self.check_transmission_state(response)
 
-        # Splits the state byte in 8 bits.
+
         state = response[1]
+        if not mapped:
+            return state
+
         n_bits = 8
 
+        # Splits the state byte in 8 bits.
         bits = [(state >> bit) & 1 for bit in range(n_bits - 1, -1, -1)]
         state = ""
         for pos, bit in enumerate(bits):
@@ -446,9 +478,9 @@ class AuroraSerialClient(AuroraBaseClient):
         (for parity, stop_bits and data_bits, serial module has some constants.)
     """
 
-    def __init__(self, address, port, baudrate=defaults.BAUDRATE,
-                 parity=defaults.PARITY, stop_bits=defaults.STOP_BITS,
-                 data_bits=defaults.DATA_BITS, timeout=defaults.TIMEOUT):
+    def __init__(self, address, port, baudrate=Defaults.BAUDRATE,
+                 parity=Defaults.PARITY, stop_bits=Defaults.STOP_BITS,
+                 data_bits=Defaults.DATA_BITS, timeout=Defaults.TIMEOUT):
 
         self.serline = serial.Serial()
         self.serline.port = port
@@ -511,7 +543,7 @@ class AuroraTCPClient(AuroraBaseClient):
         - address: Serial line address of the inverter.
     """
 
-    def __init__(self, ip, port, address, timeout=defaults.TIMEOUT):
+    def __init__(self, ip, port, address, timeout=Defaults.TIMEOUT):
         self.ip = ip
         self.port = port
         self.address = address
