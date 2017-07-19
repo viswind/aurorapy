@@ -5,7 +5,7 @@ except ImportError:
 
 setup(
     name="aurorapy",
-    version="0.2.1",
+    version="0.2.2",
     description='Python implementation of Aurora Protocol',
     author="E.Va Energie Valsabbia",
     author_email="it@energievalsabbia.it",
