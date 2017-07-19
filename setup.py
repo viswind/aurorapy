@@ -16,12 +16,13 @@ setup(
     url='https://gitlab.com/energievalsabbia/aurorapy',
     install_requires=[
         'pyserial>=3.2.1',
+        'future>=0.16.0',
     ],
-    classifiers=(
+    classifiers=[
         # 'Development Status :: 1 - Planning',
         # 'Development Status :: 2 - Pre-Alpha',
-        'Development Status :: 3 - Alpha',
-        # 'Development Status :: 4 - Beta',
+        # 'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         # 'Development Status :: 6 - Mature',
         # 'Development Status :: 7 - Inactive',
         'Intended Audience :: Developers',
@@ -29,6 +30,5 @@ setup(
         'License :: OSI Approved :: MIT License',
         'Environment :: Console',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
-    )
+    ]
 )

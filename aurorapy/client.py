@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-
+from __future__ import absolute_import
+from past.builtins import map
 import socket
 import select
 import struct
@@ -20,8 +21,8 @@ logger.propagate = False
 from serial.serialutil import SerialException
 import serial
 
-from mapping import Mapping
-import defaults
+from .mapping import Mapping
+from .defaults import Defaults
 
 class AuroraError(Exception):
     pass
@@ -183,7 +184,7 @@ class AuroraBaseClient(object):
         self.check_transmission_state(response)
 
         res = response.decode('ascii')
-        return ' - '.join(map(lambda(i,x): Mapping.VERSION_PARAMETERS[i].get(x, 'N/A'), enumerate(res[2:6])))
+        return (' - '.join(map(lambda i,x: Mapping.VERSION_PARAMETERS[i].get(x, 'N/A'), [0,1,2,3], res[2:6])))
 
     def measure(self, index, global_measure=False):
         """
@@ -477,9 +478,9 @@ class AuroraSerialClient(AuroraBaseClient):
         (for parity, stop_bits and data_bits, serial module has some constants.)
     """
 
-    def __init__(self, address, port, baudrate=defaults.BAUDRATE,
-                 parity=defaults.PARITY, stop_bits=defaults.STOP_BITS,
-                 data_bits=defaults.DATA_BITS, timeout=defaults.TIMEOUT):
+    def __init__(self, address, port, baudrate=Defaults.BAUDRATE,
+                 parity=Defaults.PARITY, stop_bits=Defaults.STOP_BITS,
+                 data_bits=Defaults.DATA_BITS, timeout=Defaults.TIMEOUT):
 
         self.serline = serial.Serial()
         self.serline.port = port
@@ -542,7 +543,7 @@ class AuroraTCPClient(AuroraBaseClient):
         - address: Serial line address of the inverter.
     """
 
-    def __init__(self, ip, port, address, timeout=defaults.TIMEOUT):
+    def __init__(self, ip, port, address, timeout=Defaults.TIMEOUT):
         self.ip = ip
         self.port = port
         self.address = address
