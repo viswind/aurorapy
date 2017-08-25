@@ -10,4 +10,5 @@ linter:
     - find -name '*.py' -print0 | xargs -0 pylint --py3k --reports=n
 tests:
   script:
-    - python -m unittest discover test
+    - python2.7 -m unittest discover test
+    - python3 -m unittest discover test
