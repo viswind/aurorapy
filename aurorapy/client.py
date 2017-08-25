@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import
 from past.builtins import map
+from serial.serialutil import SerialException
 import socket
 import select
 import struct
 import binascii
 import logging
 import sys
+import serial
+
+from .mapping import Mapping
+from .defaults import Defaults
 
 logger = logging.getLogger('aurorapy')
 logger.setLevel(logging.WARNING)
@@ -18,12 +23,6 @@ ch.setFormatter(formatter)
 logger.addHandler(ch)
 logger.propagate = False
 
-from serial.serialutil import SerialException
-import serial
-
-from .mapping import Mapping
-from .defaults import Defaults
-
 class AuroraError(Exception):
     pass
 
@@ -33,7 +32,7 @@ class AuroraBaseClient(object):
     specifies the communication channel.
 
     The Aurora inverters protocol uses a fixed length request message with 8 Bytes
-    of data and 2 Bytes for CRC (calculated with CRC Polynomial algorithm CCITT),
+    of data and 2 Bytes for CRC (calculated with CRC CCITT X.25),
     and a fixed length response message with 6 Bytes of data and 2 Bytes for CRC.
 
     Structure and example of request message:
@@ -183,8 +182,8 @@ class AuroraBaseClient(object):
         self.check_crc(response)
         self.check_transmission_state(response)
 
-        res = response.decode('ascii')
-        return (' - '.join(map(lambda i,x: Mapping.VERSION_PARAMETERS[i].get(x, 'N/A'), [0,1,2,3], res[2:6])))
+        res = response[2:6].decode('ascii')
+        return (' - '.join(map(lambda i, x: Mapping.VERSION_PARAMETERS[i].get(x, 'N/A'), [0, 1, 2, 3], res)))
 
     def measure(self, index, global_measure=False):
         """
@@ -209,7 +208,6 @@ class AuroraBaseClient(object):
         self.check_transmission_state(response)
 
         return struct.unpack('>f', response[2:6])[0]
-
 
     def serial_number(self):
         """
@@ -288,7 +286,7 @@ class AuroraBaseClient(object):
         if ndays:
             request += bytearray(struct.pack('>H', ndays))
         else:
-            request += bytearray([0,0])
+            request += bytearray([0, 0])
 
         global_measure = 1 if global_measure else 0
         request.append(global_measure)
@@ -367,12 +365,15 @@ class AuroraBaseClient(object):
         Only for Aurora Central.
 
         Arguments:
-            - index: index of system info (0 -> transformer_type, 1-> 50kW modules number) [int]
+            - index: index of system info (1 -> transformer_type, 2-> 50kW modules number) [int]
 
         Returns:
             - value of system info requested [int]
         """
-        request = bytearray([self.address, 101, 0, 0, 0, 0, 0, 0])
+        if index not in [1, 2]:
+            raise AuroraError("Index not supported")
+
+        request = bytearray([self.address, 101, index, 0, 0, 0, 0, 0])
         request += self.crc(request)
 
         response = self.send_and_recv(request)
@@ -380,7 +381,10 @@ class AuroraBaseClient(object):
         self.check_crc(response)
         self.check_transmission_state(response)
 
-        return Mapping.TRANSFORMER_TYPES.get(response[2], 'N/A')
+        if index == 1:
+            return Mapping.TRANSFORMER_TYPES.get(response[2], 'N/A')
+        else:
+            return response[2]
 
     def junction_box_monitoring_status(self):
         """
@@ -406,7 +410,7 @@ class AuroraBaseClient(object):
             return response[4:6]
         return response
 
-    def junction_box_param(self, junction_box,  parameter):
+    def junction_box_param(self, junction_box, parameter):
         """
         Sends a Junction Box Val Request. (command: 201)
 
@@ -445,7 +449,6 @@ class AuroraBaseClient(object):
         self.check_crc(response)
         self.check_transmission_state(response)
 
-
         state = response[1]
         if not mapped:
             return state
@@ -457,7 +460,9 @@ class AuroraBaseClient(object):
         state = ""
         for pos, bit in enumerate(bits):
             if bit:
-                state += Mapping.JBOX_STATE[pos] + "\n"
+                if state:
+                    state += "\n"
+                state += Mapping.JBOX_STATE[pos]
 
         if not state:
             state = "OK"
@@ -495,13 +500,13 @@ class AuroraSerialClient(AuroraBaseClient):
         try:
             self.serline.open()
         except SerialException as e:
-            raise AuroraError(e.message)
+            raise AuroraError(str(e))
 
     def close(self):
         try:
             self.serline.close()
         except SerialException as e:
-            raise AuroraError(e.message)
+            raise AuroraError(str(e))
 
     def send_and_recv(self, request):
         """
@@ -523,12 +528,12 @@ class AuroraSerialClient(AuroraBaseClient):
 
         self.serline.write(str(request))
 
-        while(len(response)<8):
+        while(len(response) < 8):
             try:
                 response += self.serline.readline(str(request))
             except SerialException as e:
                 self.serline.close()
-                raise AuroraError(e.message)
+                raise AuroraError(str(e))
 
         return bytearray(response)
 
@@ -556,7 +561,7 @@ class AuroraTCPClient(AuroraBaseClient):
             self.s.connect((self.ip, self.port))
         except socket.error as e:
             self.s = None
-            raise AuroraError(e.message)
+            raise AuroraError(str(e))
 
     def close(self):
         self.s.close()
@@ -585,13 +590,13 @@ class AuroraTCPClient(AuroraBaseClient):
             self.s.send(str(request))
             self.s.setblocking(0)
             response = ''
-            while(len(response)<8):
+            while(len(response) < 8):
                 ready = select.select([self.s], [], [], self.timeout)
                 if ready[0]:
                     response += self.s.recv(1024)
                 else:
                     raise AuroraError("Reading Timeout")
         except socket.error as e:
-            raise AuroraError("Socket Error: " + e.message)
+            raise AuroraError("Socket Error: " + str(e))
 
         return bytearray(response)

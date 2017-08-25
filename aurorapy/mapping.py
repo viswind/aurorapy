@@ -108,7 +108,7 @@ class Mapping(object):
         47: "Input OC"
     }
 
-    ALARM_STATES= {
+    ALARM_STATES = {
         0: "No alarm",
         1: "Sun Low",
         2: "Input OC",

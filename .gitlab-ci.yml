@@ -1,0 +1,13 @@
+before_script:
+    # Silence pylint complaining about its missing config file.
+    - touch ~/.pylintrc
+
+linter:
+  script:
+    # All tests but E501 (line too long), E302 (two blank lines between top level functions)
+    - flake8 --ignore=E501,E302
+    # Check Python 3 conformance.
+    - find -name '*.py' -print0 | xargs -0 pylint --py3k --reports=n
+tests:
+  script:
+    - python -m unittest discover test
