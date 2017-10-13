@@ -62,60 +62,59 @@ Measure request is implemented by **measure(self, index, global_measure=False)**
 
     ### Table of measure's codes
 
-    | Code  | Measure                         | Notes                                   |
-    |-------|---------------------------------|-----------------------------------------|
-    | 1     | Grid Voltage\*                  | For three-phases systems is the mean    |
-    | 2     | Grid Current\*                  | For three-phases systems is the mean    |
-    | 3     | Grid Power\*                    | For three-phases systems is the mean    |
-    | 4     | Frequency                       | For three-phases systems is the mean    |
-    | 5     | Vbulk                           | For Inverter with more Bulk is the sum  |
-    | 6     | Ileak (Dc/Dc)                   |                                         |
-    | 7     | Ileak (Inverter)                |                                         |
-    | 8     | Pin1\*                          | Pin for single channel module           |
-    | 9     | Pin2                            |                                         |
-    | 21    | Inverter Temperature            |                                         |
-    | 22    | Booster Temperature             |                                         |
-    | 23    | Input 1 Voltage                 | Input Voltage for single channel module |
-    | 24    | - - -                           |                                         |
-    | 25    | Input 1 Current\*               | Input Current for single channel module |
-    | 26    | Input 2 Voltage                 |                                         |
-    | 27    | Input 2 Current                 |                                         |
-    | 28    | Grid Voltage (Dc/Dc)            |                                         |
-    | 29    | Grid Frequency (Dc/Dc)          |                                         |
-    | 30    | Isolation Resistance (Riso)     |                                         |
-    | 31    | Vbulk (Dc/Dc)                   |                                         |
-    | 32    | Average Grid Voltage (VgridAvg) |                                         |
-    | 33    | VbulkMid                        |                                         |
-    | 34    | Power Peak                      |                                         |
-    | 35    | Power Peak Today                |                                         |
-    | 36    | Grid Voltage neutral            |                                         |
-    | 37    | Wind Generator Frequency        |                                         |
-    | 38    | Grid Voltage neutral-phase      |                                         |
-    | 39    | Grid Current phase r            |                                         |
-    | 40    | Grid Current phase s            |                                         |
-    | 41    | Grid Current phase t            |                                         |
-    | 42    | Frequency phase r               |                                         |
-    | 43    | Frequency phase s               |                                         |
-    | 44    | Frequency phase t               |                                         |
-    | 45    | Vbulk +                         |                                         |
-    | 46    | Vbulk -                         |                                         |
-    | 47    | Supervisor Temperature          |                                         |
-    | 48    | Alim. Temperature               |                                         |
-    | 49    | Heat Sink Temperature           |                                         |
-    | 50    | Temperature 1                   |                                         |
-    | 51    | Temperature 2                   |                                         |
-    | 52    | Temperature 3                   |                                         |
-    | 53    | Fan 1 Speed                     |                                         |
-    | 54    | Fan 2 Speed                     |                                         |
-    | 55    | Fan 3 Speed                     |                                         |
-    | 56    | Fan 4 Speed                     |                                         |
-    | 57    | Fan 5 Speed                     |                                         |
-    | 58    | Power Saturation limit (Der.)   |                                         |
-    | 59    | Riferimento Anello Bulk         |                                         |
-    | 60    | Vpanel micro                    |                                         |
-    | 61    | Grid Voltage phase r            |                                         |
-    | 62    | Grid Voltage phase s            |                                         |
-    | 63    | Grid Voltage phase t            |                                         |
+    | Code  | Measure                         |
+    |-------|---------------------------------|
+    | 1     | Grid Voltage\*                  |
+    | 2     | Grid Current\*                  |
+    | 3     | Grid Power\*                    |
+    | 4     | Frequency                       |
+    | 5     | Vbulk                           |
+    | 6     | Ileak (Dc/Dc)                   |
+    | 7     | Ileak (Inverter)                |
+    | 8     | Pin1\*                          |
+    | 9     | Pin2                            |
+    | 21    | Inverter Temperature            |
+    | 22    | Booster Temperature             |
+    | 23    | Input 1 Voltage                 |
+    | 25    | Input 1 Current\*               |
+    | 26    | Input 2 Voltage                 |
+    | 27    | Input 2 Current                 |
+    | 28    | Grid Voltage (Dc/Dc)            |
+    | 29    | Grid Frequency (Dc/Dc)          |
+    | 30    | Isolation Resistance (Riso)     |
+    | 31    | Vbulk (Dc/Dc)                   |
+    | 32    | Average Grid Voltage (VgridAvg) |
+    | 33    | VbulkMid                        |
+    | 34    | Power Peak                      |
+    | 35    | Power Peak Today                |
+    | 36    | Grid Voltage neutral            |
+    | 37    | Wind Generator Frequency        |
+    | 38    | Grid Voltage neutral-phase      |
+    | 39    | Grid Current phase r            |
+    | 40    | Grid Current phase s            |
+    | 41    | Grid Current phase t            |
+    | 42    | Frequency phase r               |
+    | 43    | Frequency phase s               |
+    | 44    | Frequency phase t               |
+    | 45    | Vbulk +                         |
+    | 46    | Vbulk -                         |
+    | 47    | Supervisor Temperature          |
+    | 48    | Alim. Temperature               |
+    | 49    | Heat Sink Temperature           |
+    | 50    | Temperature 1                   |
+    | 51    | Temperature 2                   |
+    | 52    | Temperature 3                   |
+    | 53    | Fan 1 Speed                     |
+    | 54    | Fan 2 Speed                     |
+    | 55    | Fan 3 Speed                     |
+    | 56    | Fan 4 Speed                     |
+    | 57    | Fan 5 Speed                     |
+    | 58    | Power Saturation limit (Der.)   |
+    | 59    | Riferimento Anello Bulk         |
+    | 60    | Vpanel micro                    |
+    | 61    | Grid Voltage phase r            |
+    | 62    | Grid Voltage phase s            |
+    | 63    | Grid Voltage phase t            |
 
 **Returns**: The measure requested in the standard unit of measure (V/A/W/C). [float]
 
