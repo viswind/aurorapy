@@ -17,15 +17,31 @@ python setup.py install
 
 ## Usage
 
+### TCP Client
 ```python
-from aurorapy.client import AuroraError, AuroraTCPClient # or AuroraSerialClient
+from aurorapy.client import AuroraError, AuroraTCPClient
 
 client = AuroraTCPClient(ip='192.168.1.34', port=502, address=10)
 client.connect()
 try:
     print("Inverter serial number: %s" % client.serial_number())
 except AuroraError as e:
-    print(e.message)
+    print(str(e))
+client.close()
+```
+
+### Serial Client
+```python
+from aurorapy.client import AuroraError, AuroraSerialClient
+
+# AuroraSerialClient(address, port, baudrate=19200, parity='N',
+#                    stop_bits=1, data_bits=8, timeout=5)
+client = AuroraSerialClient(port='/dev/ttyUSB0', address=10)
+client.connect()
+try:
+    print("Inverter serial number: %s" % client.serial_number())
+except AuroraError as e:
+    print(str(e))
 client.close()
 ```
 
