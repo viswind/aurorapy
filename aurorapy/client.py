@@ -530,7 +530,7 @@ class AuroraSerialClient(AuroraBaseClient):
 
         while(len(response) < 8):
             try:
-                response += self.serline.readline(str(request))
+                response += self.serline.readline(8 - len(response))
             except SerialException as e:
                 self.serline.close()
                 raise AuroraError(str(e))
