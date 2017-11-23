@@ -295,6 +295,8 @@ JBox value request is implemented by **junction_box_param(self, junction_box, pa
     | 15    | Analog Input 4                  | -    |
     | 16    | Global string current           | A    |
 
+    **N.B.: *Current String 0* is the current of the first string from the right.**
+
 **Returns**: The value of parameter requested in the standard unit of measure (A,V,C). [float]
 
 ### Example
