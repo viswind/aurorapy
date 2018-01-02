@@ -209,6 +209,17 @@ class AuroraBaseClient(object):
 
         return struct.unpack('>f', response[2:6])[0]
 
+    def joules_in_last_10s(self):
+        request = bytearray([self.address, 76, 0, 0, 0, 0, 0, 0])
+        request += self.crc(request)
+
+        response = self.send_and_recv(request)
+
+        self.check_crc(response)
+        self.check_transmission_state(response)
+
+        return struct.unpack('>f', response[2:3])[0]
+
     def serial_number(self):
         """
         Sends a Serial Number reading request. (command: 63)
