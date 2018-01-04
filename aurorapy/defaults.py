@@ -7,3 +7,4 @@ class Defaults(object):
     STOP_BITS = 1
     DATA_BITS = 8
     TIMEOUT = 5  # seconds
+    TRIES = 3
