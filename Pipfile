@@ -1,0 +1,17 @@
+[[source]]
+
+
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[dev-packages]
+
+"flake8" = "*"
+pylint = "*"
+mock = "*"
+
+[packages]
+
+pyserial = "==3.2.1"
+future = "==0.16.0"
