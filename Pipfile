@@ -15,3 +15,4 @@ mock = "*"
 
 pyserial = "==3.2.1"
 future = "==0.16.0"
+six = "*"

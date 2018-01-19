@@ -1,20 +1,20 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "a57981596166d756b01758fe3987f283b0e2f2ee41f25186e1a878f948e40621"
+            "sha256": "9bd297e247dd1a88bff37aeda274337c2aaadbe1c552663d6ee3b40af755d436"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
-            "implementation_version": "0",
+            "implementation_version": "3.6.3",
             "os_name": "posix",
             "platform_machine": "x86_64",
             "platform_python_implementation": "CPython",
             "platform_release": "4.13.0-kali1-amd64",
             "platform_system": "Linux",
             "platform_version": "#1 SMP Debian 4.13.4-2kali1 (2017-10-16)",
-            "python_full_version": "2.7.13",
-            "python_version": "2.7",
-            "sys_platform": "linux2"
+            "python_full_version": "3.6.3",
+            "python_version": "3.6",
+            "sys_platform": "linux"
         },
         "pipfile-spec": 6,
         "requires": {},
@@ -39,6 +39,13 @@
                 "sha256:1eecfe4022240f2eab5af8d414f0504e072ee68377ba63d3b6fe6e66c26f66d1"
             ],
             "version": "==3.2.1"
+        },
+        "six": {
+            "hashes": [
+                "sha256:832dc0e10feb1aa2c68dcc57dbb658f1c7e65b9b61af69048abc87a2db00a0eb",
+                "sha256:70e8a77beed4562e7f14fe23a786b54f6296e34344c23bc42f07b15018ff98e9"
+            ],
+            "version": "==1.11.0"
         }
     },
     "develop": {
@@ -54,7 +61,7 @@
                 "sha256:4ba998e881f285c1d1b73f5b6e3766539b4e162320f9589334400c5ddc35198c",
                 "sha256:31f235852f88edc1558d428d890663c49eb4514ffec9f3650e7f3c9e4a12e36f"
             ],
-            "markers": "python_version == '2.7'",
+            "markers": "python_version < '3.4'",
             "version": "==1.4"
         },
         "configparser": {

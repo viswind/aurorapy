@@ -18,6 +18,7 @@ tests_py3:
   image: python:3
   script:
     - pip install pipenv
+    - pipenv --three install --dev
     - pipenv run python --version
     - pipenv run python -m unittest discover test
 
