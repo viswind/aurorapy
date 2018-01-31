@@ -212,6 +212,12 @@ class AuroraBaseClient(object):
             raise AuroraError("Response timeout")
 
     def joules_in_last_10s(self):
+    	"""
+        Sends a request to get latest 10 seconds produced Joules [Ws]. (command: 76)
+
+        Returns:
+            - The measurement in Joules [Ws] , updated every 10 seconds. [float]
+        """
         request = bytearray([self.address, 76, 0, 0, 0, 0, 0, 0])
         request += self.crc(request)
 
