@@ -557,7 +557,7 @@ class AuroraSerialClient(AuroraBaseClient):
                 raise AuroraError(str(e))
         
         if tries == -1 and len(response) < 8:
-            raise AuroraError("Inverter is shutdown")
+            raise AuroraError('No response after %d tries' % self.tries )
 
         return bytearray(response)
 
