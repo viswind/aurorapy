@@ -212,7 +212,7 @@ class AuroraBaseClient(object):
             raise AuroraError("Response timeout")
 
     def joules_in_last_10s(self):
-    	"""
+        """
         Sends a request to get latest 10 seconds produced Joules [Ws]. (command: 76)
 
         Returns:
@@ -555,9 +555,9 @@ class AuroraSerialClient(AuroraBaseClient):
             except SerialException as e:
                 self.serline.close()
                 raise AuroraError(str(e))
-        
+
         if tries == -1 and len(response) < 8:
-            raise AuroraError('No response after %d tries' % self.tries )
+            raise AuroraError('No response after %d tries' % self.tries)
 
         return bytearray(response)
 
