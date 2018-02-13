@@ -203,11 +203,30 @@ class AuroraBaseClient(object):
         request += self.crc(request)
 
         response = self.send_and_recv(request)
+        if response != '':
+            self.check_crc(response)
+            self.check_transmission_state(response)
+
+            return struct.unpack('>f', response[2:6])[0]
+        else:
+            raise AuroraError("Response timeout")
+
+    def joules_in_last_10s(self):
+        """
+        Sends a request to get latest 10 seconds produced Joules [Ws]. (command: 76)
+
+        Returns:
+            - The measurement in Joules [Ws] , updated every 10 seconds. [float]
+        """
+        request = bytearray([self.address, 76, 0, 0, 0, 0, 0, 0])
+        request += self.crc(request)
+
+        response = self.send_and_recv(request)
 
         self.check_crc(response)
         self.check_transmission_state(response)
 
-        return struct.unpack('>f', response[2:6])[0]
+        return struct.unpack('>f', response[2:3])[0]
 
     def serial_number(self):
         """
@@ -485,15 +504,16 @@ class AuroraSerialClient(AuroraBaseClient):
 
     def __init__(self, address, port, baudrate=Defaults.BAUDRATE,
                  parity=Defaults.PARITY, stop_bits=Defaults.STOP_BITS,
-                 data_bits=Defaults.DATA_BITS, timeout=Defaults.TIMEOUT):
+                 data_bits=Defaults.DATA_BITS, timeout=Defaults.TIMEOUT, tries=Defaults.TRIES):
 
-        self.serline = serial.Serial()
+        self.serline = serial.Serial(timeout=timeout)
         self.serline.port = port
         self.serline.baudrate = baudrate
         self.serline.parity = parity
         self.serline.stop_bits = stop_bits
         self.serline.data_bits = data_bits
         self.timeout = timeout
+        self.tries = tries
         self.address = address
 
     def connect(self):
@@ -525,15 +545,19 @@ class AuroraSerialClient(AuroraBaseClient):
         self.serline.flushOutput()
 
         response = ''
-
+        tries = self.tries
         self.serline.write(str(request))
 
-        while(len(response) < 8):
+        while(len(response) < 8 and tries >= 0):
+            tries = tries - 1
             try:
                 response += self.serline.readline(8 - len(response))
             except SerialException as e:
                 self.serline.close()
                 raise AuroraError(str(e))
+
+        if tries == -1 and len(response) < 8:
+            raise AuroraError('No response after %d tries' % self.tries)
 
         return bytearray(response)
 
