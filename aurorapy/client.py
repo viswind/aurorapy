@@ -544,9 +544,9 @@ class AuroraSerialClient(AuroraBaseClient):
         self.serline.flushInput()
         self.serline.flushOutput()
 
-        response = ''
+        response = b''
         tries = self.tries
-        self.serline.write(str(request))
+        self.serline.write(request)
 
         while(len(response) < 8 and tries >= 0):
             tries = tries - 1
@@ -611,9 +611,9 @@ class AuroraTCPClient(AuroraBaseClient):
                 noise = self.s.recv(4096)
                 logger.warning('Found noises on the socket buffer: %s' % (binascii.hexlify(noise)))
 
-            self.s.send(str(request))
+            self.s.send(request)
             self.s.setblocking(0)
-            response = ''
+            response = b''
             while(len(response) < 8):
                 ready = select.select([self.s], [], [], self.timeout)
                 if ready[0]:
