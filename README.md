@@ -62,6 +62,7 @@ The available commands are:
 * 68: Cumulated Float Energy Readings (Only for Aurora Central)
 * 70: Time/Date reading
 * 72: Firmware release reading
+* 76: Latest 10 seconds produced Joules
 * 86: Last Four Alarms
 * 101: System Info reading (Only for Aurora Central)
 * 200: Junction Box - State Request

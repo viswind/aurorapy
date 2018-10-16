@@ -219,6 +219,17 @@ Firmware release reading request is implemeted by **firmware(self, mrelease)** m
 firmware_micro_release_C = client.firmware(3)
 ```
 
+## 76) Latest 10 seconds produced Joules
+
+Latest 10 seconds produced Joules request is implemeted by **joules_in_last_10s(self)** method.
+
+**Returns**: The measurement in Joules [Ws] , updated every 10 seconds. [float]
+
+### Example
+```python
+production_last_10s = client.joules_in_last_10s()
+```
+
 ## 86) Last four alarms request
 
 Last four alarms request is implemented by **alarms(self)** method.
