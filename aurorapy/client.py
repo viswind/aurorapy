@@ -9,6 +9,7 @@ import binascii
 import logging
 import sys
 import serial
+import math
 
 from .mapping import Mapping
 from .defaults import Defaults
@@ -285,7 +286,7 @@ class AuroraBaseClient(object):
 
         return response[2:6]
 
-    def cumulated_energy(self, period, ndays=None, global_measure=False):
+    def cumulated_float_energy(self, period, ndays=None, global_measure=False):
         """
         Sends a Cumulated Float Energy Reading request. (command: 68)
         Only for Aurora Central
@@ -360,6 +361,31 @@ class AuroraBaseClient(object):
         self.check_transmission_state(response)
 
         return '.'.join(response[2:6].decode('ascii'))
+
+    def cumulated_energy(self, period):
+        """
+        Sends a Cumulated Energy Reading request. (command: 78)
+        Only for Grid-Tied Inverter
+
+        Arguments:
+            - period: Period of cumulated energy. (see the manual for the available periods)
+                      For ex. 1 => 'Current week energy'. [int]
+        Returns:
+            The cumulated energy. [float]
+        """
+        request = bytearray([self.address, 78, period, 0, 0, 0, 0, 0])
+
+        request += self.crc(request)
+
+        response = self.send_and_recv(request)
+
+        self.check_crc(response)
+        self.check_transmission_state(response)
+
+        a = response[2:6]
+
+        value = a[0] * math.pow(2, 24) + a[1] * math.pow(2, 16) + a[2] * math.pow(2, 8) + a[3]
+        return value
 
     def alarms(self):
         """

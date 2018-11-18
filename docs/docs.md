@@ -159,9 +159,9 @@ Flags or switch reading request is implemented by **flags_and_switches(self)** m
 flags_and_switches = client.flags_and_switches()
 ```
 
-## 68) Cumulated energy request
+## 68) Cumulated float energy request
 
-Cumulated energy request is implemented by **cumulated_energy(self, period, ndays=None, global_measure=False)** method.
+Cumulated energy request is implemented by **cumulated_float_energy(self, period, ndays=None, global_measure=False)** method.
 
 **Arguments**:
   * *period*: Period on which calculate the cumulated energy. [integer]
@@ -228,6 +228,32 @@ Latest 10 seconds produced Joules request is implemeted by **joules_in_last_10s(
 ### Example
 ```python
 production_last_10s = client.joules_in_last_10s()
+```
+
+## 78) Cumulated energy request
+
+Cumulated energy request is implemented by **cumulated_energy(self, period)** method.
+
+**Arguments**:
+  * *period*: Period on which calculate the cumulated energy. [integer]
+
+      Available periods:
+      * 0 = Current day
+      * 1 = Current week
+      * 3 = Current Month
+      * 4 = Current Year
+      * 5 = Total
+      * 6 = Partial Energy (cumulated since reset)
+
+**Returns**: The cumulated energy requested in Wh. [float]
+
+### Example
+```python
+daily_energy = client.cumulated_energy(period=1)
+
+week_energy = client.cumulated_energy(period=2)
+
+year_energy = client.cumulated_energy(period=4)
 ```
 
 ## 86) Last four alarms request

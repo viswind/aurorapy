@@ -153,14 +153,14 @@ class TestClient(unittest.TestCase):
         with mock.patch.object(self.client, "send_and_recv", autospec=True) as sar:
             sar.return_value = bytearray(b'\x00\x00\x44\x9a\x47\x5c\x50\xfa')
 
-            today_energy = self.client.cumulated_energy(1)
+            today_energy = self.client.cumulated_float_energy(1)
 
             sar.assert_called_with(bytearray(b'\x01\x44\x01\x00\x00\x00\x00\x00\x97\xae'))
             self.assertAlmostEqual(today_energy, 1234.23, 2)
 
             sar.return_value = bytearray(b'\x00\x00\x46\xea\xc6\x80\x0b\xca')
 
-            last_10_days = self.client.cumulated_energy(5, 10)
+            last_10_days = self.client.cumulated_float_energy(5, 10)
 
             sar.assert_called_with(bytearray(b'\x01\x44\x05\x00\x0a\x00\x00\x00\x95\x62'))
             self.assertAlmostEqual(last_10_days, 30051.25, 2)
