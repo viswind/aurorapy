@@ -216,13 +216,10 @@ class AuroraBaseClient(object):
         request += self.crc(request)
 
         response = self.send_and_recv(request)
-        if response != '':
-            self.check_crc(response)
-            self.check_transmission_state(response)
+        self.check_crc(response)
+        self.check_transmission_state(response)
 
-            return struct.unpack('>f', response[2:6])[0]
-        else:
-            raise AuroraError("Response timeout")
+        return struct.unpack('>f', response[2:6])[0]
 
     def joules_in_last_10s(self):
         """
