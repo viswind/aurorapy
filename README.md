@@ -64,6 +64,7 @@ The available commands are:
 * 70: Time/Date reading
 * 72: Firmware release reading
 * 76: Latest 10 seconds produced Joules
+* 78: Cumulated Energy readings (Only for Aurora grid-ties inverters)
 * 86: Last Four Alarms
 * 101: System Info reading (Only for Aurora Central)
 * 200: Junction Box - State Request
@@ -71,7 +72,6 @@ The available commands are:
 
 Missing commands:
 
-* 78: Cumulated Energy readings (Only for Aurora grid-ties inverters)
 * 85: Baud rate setting on serial lines
 * 103: Junction Box monitoring status (Only for Aurora Central)
 * 105: System P/N Reading (Only for Aurora Central)

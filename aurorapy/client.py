@@ -380,7 +380,7 @@ class AuroraBaseClient(object):
             - period: Period of cumulated energy. (see the manual for the available periods)
                       For ex. 1 => 'Current week energy'. [int]
         Returns:
-            The cumulated energy. [float]
+            The cumulated energy. [int]
         """
         request = bytearray([self.address, 78, period, 0, 0, 0, 0, 0])
 

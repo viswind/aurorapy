@@ -157,9 +157,9 @@ class TestClient(unittest.TestCase):
             sar.assert_called_with(bytearray(b'\x01\x43\x00\x00\x00\x00\x00\x00\xa4\x6d'))
             self.assertEqual(flags_and_switches, bytearray(b'\x01\x80\x00\x00'))
 
-    def test_cumulated_energy(self):
+    def test_cumulated_float_energy(self):
         """
-        Test cumulated energy request. (command 68)
+        Test cumulated float energy request. (command 68)
         """
         with mock.patch.object(self.client, "send_and_recv", autospec=True) as sar:
             sar.return_value = bytearray(b'\x00\x00\x44\x9a\x47\x5c\x50\xfa')
@@ -175,6 +175,18 @@ class TestClient(unittest.TestCase):
 
             sar.assert_called_with(bytearray(b'\x01\x44\x05\x00\x0a\x00\x00\x00\x95\x62'))
             self.assertAlmostEqual(last_10_days, 30051.25, 2)
+
+    def test_cumulated_energy(self):
+        """
+        Test cumulated energy request. (command 78)
+        """
+        with mock.patch.object(self.client, "send_and_recv", autospec=True) as sar:
+            sar.return_value = bytearray(b'\x00\x00\x01\x02\x03\x04\xc0\x32')
+
+            energy = self.client.cumulated_energy(1)
+
+            sar.assert_called_with(bytearray(b'\x01\x4e\x01\x00\x00\x00\x00\x00\xc0\x47'))
+            self.assertEqual(energy, 16909060)
 
     def test_time_date(self):
         """
