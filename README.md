@@ -54,6 +54,7 @@ The available commands are:
 
 * 50: State request
 * 52: P/N Reading
+* 53: Reset auto-exclusion
 * 58: Version Reading
 * 59: Measure request to the DSP
 * 63: Serial Number Reading

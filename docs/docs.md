@@ -36,6 +36,17 @@ P/N Reading request is implemented by **pn(self)** method.
 product_number = client.pn()
 ```
 
+## 53) Reset auto-exclusion
+
+Reset auto-exclusion command is implemented by **reset_auto_exclusion(self)** method.
+
+It's used to reset inverter auto-exclusion state.
+
+### Example
+```python
+client.reset_auto_exclusion()
+```
+
 ## 58) Version Reading
 
 Version Reading Request is implemented by **version(self)** method.

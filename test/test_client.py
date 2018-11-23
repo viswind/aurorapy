@@ -86,6 +86,17 @@ class TestClient(unittest.TestCase):
             sar.assert_called_with(bytearray(b'\x01\x34\x00\x00\x00\x00\x00\x00\xf0\xbb'))
             self.assertEqual(pn, u'sample')
 
+    def test_reset_auto_exclusion(self):
+        """
+        Test reset auto-exclusion. (command 53)
+        """
+        with mock.patch.object(self.client, "send_and_recv", autospec=True) as sar:
+            sar.return_value = bytearray(b'\x00\x26\x00\x00\x00\x00\x86\xac')
+
+            self.client.reset_auto_exclusion()
+
+            sar.assert_called_with(bytearray(b'\x01\x35\x0a\xc9\x00\x00\x00\x00\x38\x17'))
+
     def test_version(self):
         """
         Test version request. (command 58)

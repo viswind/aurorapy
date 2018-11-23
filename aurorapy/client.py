@@ -118,6 +118,18 @@ class AuroraBaseClient(object):
         else:
             raise AuroraError('Unknown transmission state')
 
+    def reset_auto_exclusion(self):
+        """
+        Sends a reset auto-exclusion command. (command: 53).
+        """
+        request = bytearray([self.address, 53, 10, 201, 0, 0, 0, 0])
+        request += self.crc(request)
+
+        response = self.send_and_recv(request)
+
+        self.check_crc(response)
+        self.check_transmission_state(response)
+
     def state(self, state_type, mapped=True):
         """
         Sends a state request (command: 50).
