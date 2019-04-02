@@ -539,7 +539,8 @@ class AuroraSerialClient(AuroraBaseClient):
 
     def __init__(self, address, port, baudrate=Defaults.BAUDRATE,
                  parity=Defaults.PARITY, stop_bits=Defaults.STOP_BITS,
-                 data_bits=Defaults.DATA_BITS, timeout=Defaults.TIMEOUT, tries=Defaults.TRIES):
+                 data_bits=Defaults.DATA_BITS, timeout=Defaults.TIMEOUT,
+                 tries=Defaults.TRIES, debug=False):
 
         self.serline = serial.Serial(timeout=timeout)
         self.serline.port = port
@@ -550,6 +551,9 @@ class AuroraSerialClient(AuroraBaseClient):
         self.timeout = timeout
         self.tries = tries
         self.address = address
+        if debug:
+            logger.setLevel(logging.DEBUG)
+            [lh.setLevel(logging.DEBUG) for lh in logger.handlers]
 
     def connect(self):
         try:
@@ -581,16 +585,27 @@ class AuroraSerialClient(AuroraBaseClient):
 
         response = b''
         tries = self.tries
+
+        logger.debug('Sending request packet: \n ---> (0x%s)'
+                     % ''.join('{:02x}'.format(x) for x in request))
         self.serline.write(request)
 
         while(len(response) < 8 and tries >= 0):
             tries = tries - 1
             try:
-                response += self.serline.readline(8 - len(response))
+                data = self.serline.readline(8 - len(response))
+                if data:
+                    logger.debug('<--- 0x%s [attempt: %d]'
+                                 % (''.join('{:02x}'.format(x) for x in data), self.tries - tries))
+                else:
+                    logger.debug('No data received [attempt: %d]' % (self.tries - tries))
+                response += data
             except SerialException as e:
                 self.serline.close()
                 raise AuroraError(str(e))
 
+        logger.debug('Response packet received: 0x%s'
+                     % ''.join('{:02x}'.format(x) for x in response))
         if tries == -1 and len(response) < 8:
             raise AuroraError('No response after %d tries' % self.tries)
 
@@ -607,12 +622,15 @@ class AuroraTCPClient(AuroraBaseClient):
         - address: Serial line address of the inverter.
     """
 
-    def __init__(self, ip, port, address, timeout=Defaults.TIMEOUT):
+    def __init__(self, ip, port, address, timeout=Defaults.TIMEOUT, debug=False):
         self.ip = ip
         self.port = port
         self.address = address
         self.timeout = timeout
         self.s = None
+        if debug:
+            logger.setLevel(logging.DEBUG)
+            [lh.setLevel(logging.DEBUG) for lh in logger.handlers]
 
     def connect(self):
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -646,15 +664,20 @@ class AuroraTCPClient(AuroraBaseClient):
                 noise = self.s.recv(4096)
                 logger.warning('Found noises on the socket buffer: %s' % (binascii.hexlify(noise)))
 
+            logger.debug('Sending request: 0x%s' % ''.join('{:02x}'.format(x) for x in request))
             self.s.send(request)
             self.s.setblocking(0)
             response = b''
             while(len(response) < 8):
                 ready = select.select([self.s], [], [], self.timeout)
                 if ready[0]:
-                    response += self.s.recv(1024)
+                    data = self.s.recv(1024)
+                    logger.debug('<--- 0x%s' % ''.join('{:02x}'.format(x) for x in data))
+                    response += data
                 else:
                     raise AuroraError("Reading Timeout")
+
+            logger.debug('Received response: 0x%s' % ''.join('{:02x}'.format(x) for x in response))
         except socket.error as e:
             raise AuroraError("Socket Error: " + str(e))
 
