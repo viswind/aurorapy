@@ -587,7 +587,7 @@ class AuroraSerialClient(AuroraBaseClient):
         tries = self.tries
 
         logger.debug('Sending request packet: \n ---> (0x%s)'
-                     % ''.join('{:02x}'.format(x) for x in request))
+                     % binascii.hexlify(request))
         self.serline.write(request)
 
         while(len(response) < 8 and tries >= 0):
@@ -596,7 +596,7 @@ class AuroraSerialClient(AuroraBaseClient):
                 data = self.serline.readline(8 - len(response))
                 if data:
                     logger.debug('<--- 0x%s [attempt: %d]'
-                                 % (''.join('{:02x}'.format(x) for x in data), self.tries - tries))
+                                 % (binascii.hexlify(data), self.tries - tries))
                 else:
                     logger.debug('No data received [attempt: %d]' % (self.tries - tries))
                 response += data
@@ -605,7 +605,7 @@ class AuroraSerialClient(AuroraBaseClient):
                 raise AuroraError(str(e))
 
         logger.debug('Response packet received: 0x%s'
-                     % ''.join('{:02x}'.format(x) for x in response))
+                     % binascii.hexlify(response))
         if tries == -1 and len(response) < 8:
             raise AuroraError('No response after %d tries' % self.tries)
 
@@ -664,7 +664,7 @@ class AuroraTCPClient(AuroraBaseClient):
                 noise = self.s.recv(4096)
                 logger.warning('Found noises on the socket buffer: %s' % (binascii.hexlify(noise)))
 
-            logger.debug('Sending request: 0x%s' % ''.join('{:02x}'.format(x) for x in request))
+            logger.debug('Sending request: 0x%s' % binascii.hexlify(request))
             self.s.send(request)
             self.s.setblocking(0)
             response = b''
@@ -672,12 +672,12 @@ class AuroraTCPClient(AuroraBaseClient):
                 ready = select.select([self.s], [], [], self.timeout)
                 if ready[0]:
                     data = self.s.recv(1024)
-                    logger.debug('<--- 0x%s' % ''.join('{:02x}'.format(x) for x in data))
+                    logger.debug('<--- 0x%s' % binascii.hexlify(data))
                     response += data
                 else:
                     raise AuroraError("Reading Timeout")
 
-            logger.debug('Received response: 0x%s' % ''.join('{:02x}'.format(x) for x in response))
+            logger.debug('Received response: 0x%s' % binascii.hexlify(response))
         except socket.error as e:
             raise AuroraError("Socket Error: " + str(e))
 
