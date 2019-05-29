@@ -27,6 +27,9 @@ logger.propagate = False
 class AuroraError(Exception):
     pass
 
+class AuroraTimeoutError(AuroraError):
+    pass
+
 class AuroraBaseClient(object):
     """
     Implements the command functions of Aurora Protocol without
@@ -592,7 +595,7 @@ class AuroraSerialClient(AuroraBaseClient):
                 raise AuroraError(str(e))
 
         if tries == -1 and len(response) < 8:
-            raise AuroraError('No response after %d tries' % self.tries)
+            raise AuroraTimeoutError('No response after %d tries' % self.tries)
 
         return bytearray(response)
 
