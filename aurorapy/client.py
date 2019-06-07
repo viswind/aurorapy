@@ -239,7 +239,7 @@ class AuroraBaseClient(object):
         self.check_crc(response)
         self.check_transmission_state(response)
 
-        return struct.unpack('>f', response[2:3])[0]
+        return struct.unpack('>H', response[2:4])[0]
 
     def serial_number(self):
         """
